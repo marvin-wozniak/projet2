@@ -117,7 +117,6 @@ jobs:
     deploy-production:
         needs: e2e
         runs-on: ubuntu-latest
-        if: github.ref == 'ref/head/main'
         environment:
           name: production
           url: http://$SERVER_PRODUCTION_IP
