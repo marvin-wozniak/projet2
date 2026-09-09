@@ -129,6 +129,6 @@ jobs:
               ssh-add - <<< "${{ secrets.VPS_KEY }}"
               mkdir -p ~/.ssh
               ssh-keyscan - H ${{ env.SERVER_PRODUCTION_IP }} >> ~/.ssh/known_hosts
-              scp docker-compose.production.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP }}:/var/www/docker-compose.production.yml
+              scp docker-compose.production.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP }}:/root/docker-compose.production.yml
               ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP }} "docker login ghcr.io -u ${{ github.actor }}" -p ${{ secrets.GITHUB_TOKEN }}
-              ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP }} "docker compose -f /var/www/docker-compose.production.yml up -d --force-recreated"
+              ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP }} "docker compose -f /root/docker-compose.production.yml up -d --force-recreated"
