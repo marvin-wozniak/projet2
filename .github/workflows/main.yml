@@ -86,3 +86,25 @@ jobs:
               cache-from: type=gha
               cache-to: type=gha,mode=max
 
+
+
+    e2e:
+        needs: [build-frontend-and-node-api]
+        runs-on: ubuntu-latest
+        steps:
+          - name: checkout
+            uses: actions/checkout@v4
+          
+          - name: Login to Github Container Registry
+            uses: docker/login-action@v4
+            with:
+              registry: ghcr.io
+              username: ${{ github.actor }}
+              password: ${{ secrets.GITHUB_TOKEN }}
+          - name: lancement des tests e2e
+            run: |
+              docker compose up --exit-code-from cypress --abort-on-container-exit
+          - name: clean
+            run: | 
+              docker compose down -v --remove-orphans
+              
