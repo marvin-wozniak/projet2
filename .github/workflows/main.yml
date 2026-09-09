@@ -5,7 +5,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
           matrix: 
-            includes:
+            include:
             - context_name: ./frontend 
               image_name: ghcr.io/marvin-wozniak/projet/fontend
             - context_name: ./node-api
