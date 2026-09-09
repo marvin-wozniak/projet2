@@ -30,7 +30,7 @@ jobs:
             with:
               context: ${{ matrix.context_name }}
               push: true
-              tags: ${{ matrix.imagne_name }}
+              tags: ${{ matrix.image_name }}
               cache-from: type=gha
               cache-to: type=gha,mode=max
 
