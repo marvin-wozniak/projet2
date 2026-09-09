@@ -1,5 +1,11 @@
 name: CI/CD workflow
 on: push
+env: 
+  SERVER_PRODUCTION_IP: "51.91.125.163"
+  SERVER_PRODUCTION_USER: root
+  
+
+
 jobs:
 
     tests-frontend:
@@ -108,3 +114,22 @@ jobs:
             run: | 
               docker compose down -v --remove-orphans
               
+    deploy-production:
+        needs: e2e
+        runs-on: ubuntu-latest
+        if: github.ref == 'ref/head/main'
+        environment:
+          name: production
+          url: http://$SERVER_PRODUCTION_IP
+        steps:
+          - name: checkout
+            uses: actions/checkout@v4
+          - name: deployer sur le serveur de production
+            run: |
+              eval $(ssh-agent -s)
+              ssh-add - <<< "${{ secrets.VPS_KEY }}"
+              mkdir -p ~/.ssh
+              ssh-keyscan - H ${{ env.SERVER_PRODUCTION_IP }} >> ~/.ssh/known_hosts
+              scp docker-compose.production.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP }}:/var/www/docker-compose.production.yml
+              ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP }} "docker login ghcr.io -u ${{ github.actor }}" -p ${{ secrets.GITHUB_TOKEN }}
+              ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP }} "docker compose -f /var/www/docker-compose.production.yml up -d --force-recreated"
